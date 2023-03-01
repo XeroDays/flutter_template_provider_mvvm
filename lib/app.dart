@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:template_provider_mvvm/core/services/localization_service.dart';
 import 'package:template_provider_mvvm/ui/screens/splash_screen.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,8 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(_designWidth, _designHeight),
-      builder: (context, widget) => GetMaterialApp(
-        translations: LocalizationService(),
+      builder: (context, widget) => MaterialApp(
         locale: const Locale("en"),
         title: title,
         home: const SplashScreen(),

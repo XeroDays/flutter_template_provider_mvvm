@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 /// to add the UI and UI Logic.
 ///
 class OnboardingScreen extends StatefulWidget {
+  static const String routeName = '/onboarding';
   final int currentIndex;
   final List<Onboarding> onboardingList;
   final List<Image> preCachedImages;

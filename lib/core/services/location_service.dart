@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
-import 'package:template_provider_mvvm/core/others/logger_customization/custom_logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../others/logger_customization/custom_logger.dart';
 
 class LocationService {
   Position? currentLocation;
@@ -13,11 +14,11 @@ class LocationService {
   final Logger log = CustomLogger(className: 'LocationService');
 
   ///returns [Position] for the current location
-  Future<Position?> getCurrentLocation() async {
+  Future<Position?> getCurrentLocation(BuildContext context) async {
     currentLocation = await Geolocator.getCurrentPosition();
     if (currentLocation == null) {
       await checkPermissionStatus();
-      await checkGpsService();
+      await checkGpsService(context);
     }
     log.d(
         'Latitude: ${currentLocation!.latitude}, Longitude: ${currentLocation!.longitude}');
@@ -33,36 +34,61 @@ class LocationService {
     }
   }
 
-  checkGpsService() async {
+  checkGpsService(BuildContext context) async {
     if (await Geolocator.isLocationServiceEnabled()) {
-      Get.defaultDialog(
-          title: 'GPS is Disabled',
-          middleText: 'Please turn on your GPS Location',
-          textConfirm: 'TURN ON',
-          onConfirm: () async {
-            await Geolocator.openLocationSettings();
-            Get.back();
-          },
-          textCancel: 'Skip',
-          onCancel: () {});
+//show_dialog(context, widget)
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      child: Text(
+                        'ADD CATEGORY',
+                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                      ),
+                      color: Colors.redAccent,
+                    )
+                  ],
+                ),
+                elevation: 12.0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)));
+          });
+
+      //   Get.defaultDialog(
+      //       title: 'GPS is Disabled',
+      //       middleText: 'Please turn on your GPS Location',
+      //       textConfirm: 'TURN ON',
+      //       onConfirm: () async {
+      //         await Geolocator.openLocationSettings();
+
+      //         Navigator.pop(context);
+      //       },
+      //       textCancel: 'Skip',
+      //       onCancel: () {});
+      // }
     }
-  }
 
-  ///returns the address for the provided [LatLng]
-  Future<String> getAddressFromLatLng(LatLng? location) async {
-    try {
-      List<Placemark> placeMarks = await placemarkFromCoordinates(
-          location!.latitude, location.longitude);
+    ///returns the address for the provided [LatLng]
+    Future<String> getAddressFromLatLng(LatLng? location) async {
+      try {
+        List<Placemark> placeMarks = await placemarkFromCoordinates(
+            location!.latitude, location.longitude);
 
-      Placemark place = placeMarks[0];
-      log.d("the location is  ${place.thoroughfare} "
-          " ${place.subLocality}"
-          " ${place.locality}"
-          " ${place.country}");
-      return "${place.thoroughfare} ${place.subLocality} ${place.locality} ${place.country}";
-    } catch (e) {
-      log.d("the exception is $e");
-      return '';
+        Placemark place = placeMarks[0];
+        log.d("the location is  ${place.thoroughfare} "
+            " ${place.subLocality}"
+            " ${place.locality}"
+            " ${place.country}");
+        return "${place.thoroughfare} ${place.subLocality} ${place.locality} ${place.country}";
+      } catch (e) {
+        log.d("the exception is $e");
+        return '';
+      }
     }
   }
 }

@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:template_provider_mvvm/core/constants/utils.dart';
 import 'package:template_provider_mvvm/core/models/other/onboarding.dart';
 import 'package:template_provider_mvvm/core/others/logger_customization/custom_logger.dart';
 import 'package:template_provider_mvvm/core/services/authentication/custom%20backend/auth_service.dart';
@@ -13,17 +15,23 @@ import 'package:template_provider_mvvm/ui/screens/authentication/login_screen/lo
 import 'package:template_provider_mvvm/ui/screens/navigation/navigation_screen.dart';
 import 'package:template_provider_mvvm/ui/screens/onboarding/onboarding_screen.dart';
 
+import '../../core/services/authentication/firebase/fire_auth.dart';
+import '../../core/services/navigation_service.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
+  static const String routeName = '/splash';
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final _authService = locator<AuthService>();
+  // final _authService = locator<AuthService>();
+  final _authService = locator<FireAuth>();
   final _localStorageService = locator<LocalStorageService>();
   final _notificationService = locator<NotificationsService>();
+  final NavigationService navigationService = locator<NavigationService>();
   List<Onboarding> onboardingList = [];
   final Logger log = CustomLogger(className: 'Splash Screen');
 
@@ -42,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     ///
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      Get.dialog(const NetworkErrorDialog());
+      show_dialog(NetworkErrorDialog());
       return;
     }
 
@@ -69,23 +77,37 @@ class _SplashScreenState extends State<SplashScreen> {
       ///
       final List<Image> preCachedImages =
           await _preCacheOnboardingImages(onboardingList);
-      await Get.to(() => OnboardingScreen(
-          currentIndex: _localStorageService.onBoardingPageCount,
-          onboardingList: onboardingList,
-          preCachedImages: preCachedImages));
+
+      // navigationService.navigateTo(OnboardingScreen.routeName,
+      //     arguments: OnboardingScreenArguments(
+      //         currentIndex: _localStorageService.onBoardingPageCount,
+      //         onboardingList: onboardingList,
+      //         preCachedImages: preCachedImages));
+      // await Get.to(() => OnboardingScreen(
+      //     currentIndex: _localStorageService.onBoardingPageCount,
+      //     onboardingList: onboardingList,
+      //     preCachedImages: preCachedImages));
       return;
     }
-    await _authService.doSetup();
+    //await _authService.doSetup();
 
     ///
     ///checking if the user is login or not
     ///
-    log.d('@_initialSetup. Login State: ${_authService.isLogin}');
-    if (_authService.isLogin) {
-      Get.off(() => const NavigationScreen());
-    } else {
-      Get.off(() => LoginScreen());
-    }
+    log.d(
+        '@_initialSetup. Login State: ${_authService.currentUser == null ? "Loggied in" : "Not Logged in"}');
+
+    Timer(Duration(seconds: 2), () {
+      log.e(
+          "@initState User is ${_authService.currentUser == null ? "null" : "not null"}");
+      if (_authService.currentUser != null) {
+        navigationService.navigateTo(NavigationScreen.routeName);
+      } else {
+        navigationService.navigateTo(LoginScreen.routeName);
+      }
+
+      super.initState();
+    });
   }
 
   Future<List<Image>> _preCacheOnboardingImages(

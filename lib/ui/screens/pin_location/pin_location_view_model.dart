@@ -46,8 +46,8 @@ class PinLocationViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  getAndAnimateToCurrentLocation() async {
-    final loc = await _locationService.getCurrentLocation();
+  getAndAnimateToCurrentLocation(context) async {
+    final loc = await _locationService.getCurrentLocation(context);
     if (loc != null) {
       currentLoc = LatLng(loc.latitude, loc.longitude);
       markers.add(Marker(

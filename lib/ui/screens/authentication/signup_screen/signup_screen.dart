@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:template_provider_mvvm/core/constants/strings.dart';
 import 'package:template_provider_mvvm/core/enums/view_state.dart';
+import 'package:template_provider_mvvm/core/extensions/string_extensions.dart';
 import 'package:template_provider_mvvm/ui/custom_widgets/gender_radio_group.dart';
 import 'package:template_provider_mvvm/ui/custom_widgets/image_container.dart';
 import 'package:template_provider_mvvm/ui/custom_widgets/text_fields/custom_text_field.dart';
@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
+  //route name
+  static const String routeName = '/SignUp-Screen';
 
   SignUpScreen({Key? key}) : super(key: key);
   @override
@@ -227,7 +229,10 @@ class SignUpScreen extends StatelessWidget {
                                     CustomTextField(
                                       controller: model.emailController,
                                       validator: (val) {
-                                        if (!val.toString().trim().isEmail) {
+                                        if (!val
+                                            .toString()
+                                            .trim()
+                                            .isValidEmail()) {
                                           return 'Please Enter a Valid Email';
                                         } else {
                                           return null;

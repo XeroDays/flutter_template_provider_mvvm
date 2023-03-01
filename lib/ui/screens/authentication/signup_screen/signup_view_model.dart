@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:template_provider_mvvm/core/constants/utils.dart';
 import 'package:template_provider_mvvm/core/enums/view_state.dart';
 import 'package:template_provider_mvvm/core/models/user/profile.dart';
 import 'package:template_provider_mvvm/core/others/base_view_model.dart';
 import 'package:template_provider_mvvm/core/services/authentication/firebase/fire_auth.dart';
 import 'package:template_provider_mvvm/core/services/database/firestore/firebase_db_service.dart';
 import 'package:template_provider_mvvm/core/services/file_picker_service.dart';
+import 'package:template_provider_mvvm/core/services/navigation_service.dart';
 import 'package:template_provider_mvvm/locator.dart';
 import 'package:template_provider_mvvm/ui/custom_widgets/dialogs/auth_dialog.dart';
 import 'package:template_provider_mvvm/ui/screens/navigation/navigation_screen.dart';
@@ -48,10 +49,8 @@ class SignUpViewModel extends BaseViewModel {
       password: passwordController.text,
     );
     if (user == null) {
-      Get.dialog(
-        const AuthDialog(
-            title: 'Error', message: 'Failed to create new account'),
-      );
+      show_dialog(
+          AuthDialog(title: 'Error', message: 'Failed to create new account'));
     } else {
       userProfile.gender = selectedGenderIndex == 0 ? "Male" : "Female";
       String uid = await _dbService.uploadUserData(userProfile);
@@ -66,7 +65,7 @@ class SignUpViewModel extends BaseViewModel {
         );
       }
 
-      Get.offAll(const NavigationScreen());
+      locator<NavigationService>().navigateTo(NavigationScreen.routeName);
     }
     setState(ViewState.idle);
   }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:template_provider_mvvm/core/constants/colors.dart';
-import 'package:template_provider_mvvm/core/enums/view_state.dart';
-import 'package:template_provider_mvvm/ui/screens/authentication/forget_password/forget_password_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:template_provider_mvvm/ui/screens/authentication/forget_password/forget_password_view_model.dart';
+
+import '../../../../core/enums/view_state.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
   const ForgetPasswordScreen({Key? key}) : super(key: key);
+
+  static const String routeName = '/forgetPassword';
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,10 @@ class ForgetPasswordScreen extends StatelessWidget {
       child: Consumer<ForgetPasswordScreenViewModel>(
         builder: (context, model, child) => ModalProgressHUD(
           inAsyncCall: model.state == ViewState.busy,
-          child: const SafeArea(
+          child: SafeArea(
             child: Scaffold(
-              backgroundColor: scaffoldBackgroundColor,
+              backgroundColor: Theme.of(context).backgroundColor,
+            ),
 //               body: Stack(
 //                 children: [
 //                   Padding(
@@ -133,7 +136,6 @@ class ForgetPasswordScreen extends StatelessWidget {
 //                   ),
 //                 ],
 //               ),
-            ),
           ),
         ),
       ),

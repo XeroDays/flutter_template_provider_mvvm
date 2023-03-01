@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:template_provider_mvvm/core/constants/colors.dart';
-import 'package:template_provider_mvvm/core/constants/strings.dart';
-import 'package:template_provider_mvvm/ui/custom_widgets/bottom_nav_bar/fab_bar.dart';
-import 'package:template_provider_mvvm/ui/custom_widgets/image_container.dart';
-import 'package:template_provider_mvvm/ui/screens/navigation/navigation_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:template_provider_mvvm/core/constants/colors.dart';
+
+import '../../../core/constants/strings.dart';
+import '../../custom_widgets/bottom_nav_bar/fab_bar.dart';
+import '../../custom_widgets/image_container.dart';
+import 'navigation_view_model.dart';
 
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({Key? key}) : super(key: key);
-
+  static const String routeName = "/navigation-screen";
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -18,32 +18,32 @@ class NavigationScreen extends StatelessWidget {
         child: Consumer<NavigationScreenViewModel>(
           builder: (context, model, child) => WillPopScope(
             onWillPop: () async {
-              final status = await Get.dialog(AlertDialog(
-                title: const Text('Caution!'),
-                content:
-                    const Text('Do you really want to close the application?'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back(result: true);
-                    },
-                    child: const Text('Yes'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back(result: false);
-                    },
-                    child: const Text('No'),
-                  ),
-                ],
-              ));
+              // final status = await Get.dialog(AlertDialog(
+              //   title: const Text('Caution!'),
+              //   content:
+              //       const Text('Do you really want to close the application?'),
+              //   actions: [
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         Get.back(result: true);
+              //       },
+              //       child: const Text('Yes'),
+              //     ),
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         Get.back(result: false);
+              //       },
+              //       child: const Text('No'),
+              //     ),
+              //   ],
+              // ));
 
               /// In case user has chosen not to be kept logged in,
               /// he will get logged out of the app on exit.
               // if (status && !locator<AuthService>().isRememberMe) {
               //   await locator<AuthService>().logout();
               // }
-              return status;
+              return false;
             },
             child: Scaffold(
               extendBody: true,
@@ -53,7 +53,7 @@ class NavigationScreen extends StatelessWidget {
                   ? FABBottomAppBar(
                       color: Colors.grey,
                       backgroundColor: Colors.grey,
-                      selectedColor: primaryColor,
+                      selectedColor: kPrimary1,
                       notchedShape: const CircularNotchedRectangle(),
                       onTabSelected: model.updatedScreenIndex,
                       items: [
@@ -99,7 +99,7 @@ class NavigationScreen extends StatelessWidget {
                   FloatingActionButtonLocation.centerDocked,
               floatingActionButton: model.isEnableBottomBar
                   ? FloatingActionButton(
-                      backgroundColor: otherColor,
+                      backgroundColor: kPrimary1,
                       onPressed: () {},
                       elevation: 2.0,
                       child: const Icon(Icons.add),
