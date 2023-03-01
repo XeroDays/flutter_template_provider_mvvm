@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:template_provider_mvvm/core/enums/view_state.dart';
+import 'package:template_provider_mvvm/core/extensions/string_extensions.dart';
+import 'package:template_provider_mvvm/locator.dart';
 import 'package:template_provider_mvvm/ui/custom_widgets/text_fields/custom_text_field.dart';
 import 'package:template_provider_mvvm/ui/screens/authentication/forget_password/forget_password_screen.dart';
 import 'package:template_provider_mvvm/ui/screens/authentication/login_screen/login_view_model.dart';
@@ -9,8 +10,12 @@ import 'package:template_provider_mvvm/ui/screens/authentication/signup_screen/s
 import 'package:provider/provider.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
+import '../../../../core/services/navigation_service.dart';
+
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
+
+  static const String routeName = '/login-screen';
 
   LoginScreen({Key? key}) : super(key: key);
   @override
@@ -111,7 +116,10 @@ class LoginScreen extends StatelessWidget {
                                         controller: model.emailController,
                                         onTap: () {},
                                         validator: (val) {
-                                          if (!val.toString().trim().isEmail) {
+                                          if (!val
+                                              .toString()
+                                              .trim()
+                                              .isValidEmail()) {
                                             return 'Please Enter a Valid Email';
                                           } else {
                                             return null;
@@ -211,8 +219,9 @@ class LoginScreen extends StatelessWidget {
                                         const Spacer(),
                                         InkWell(
                                           onTap: () {
-                                            Get.to(
-                                                const ForgetPasswordScreen());
+                                            locator<NavigationService>()
+                                                .navigateTo(ForgetPasswordScreen
+                                                    .routeName);
                                           },
                                           child: const Text(
                                             "Forget Password",
@@ -236,7 +245,9 @@ class LoginScreen extends StatelessWidget {
                                       alignment: Alignment.centerRight,
                                       child: InkWell(
                                         onTap: () {
-                                          Get.to(SignUpScreen());
+                                          locator<NavigationService>()
+                                              .navigateTo(
+                                                  SignUpScreen.routeName);
                                         },
                                         child: const Text(
                                           "Register",
